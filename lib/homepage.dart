@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:location_app/constants/constants.dart';
 import 'package:location_app/constants/styles.dart';
 import 'package:location_app/full_screen_modal.dart';
+import 'package:location_app/service/location_service.dart';
 import 'package:logger/web.dart';
-import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   final Map<String, String>? country;
@@ -21,15 +19,17 @@ class _HomePageState extends State<HomePage> {
   var logger = Logger();
   Map<String, List<String>> allCountries = {};
   Map<String, List<String>> countries = {};
-  bool _loading = true;
+  bool isLoading = true;
+  late LocationService locationService;
 
   @override
   void initState() {
     super.initState();
+    locationService = LocationService();
     fetchCountries();
   }
 
-  //Show full screen modal
+  //Show full screen modal from homepage
   void _showFullScreenModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -53,7 +53,6 @@ class _HomePageState extends State<HomePage> {
                       child: CountrySearchModal(
                     allCountries: allCountries,
                     scrollController: scrollController,
-                    onCountrySelected: setCountry(),
                   )),
                 ),
               );
@@ -70,7 +69,7 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, bottom: 20),
         child: Center(
-          child: _loading
+          child: isLoading
               ? const CircularProgressIndicator()
               : SingleChildScrollView(
                   child: Column(
@@ -165,7 +164,12 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton(
-                          onPressed: widget.showCountry ? () {} : null,
+                          onPressed: widget.showCountry
+                              ? () {
+                                  locationService.shoWSnackBarMessage(
+                                      'Coming soon!!', context);
+                                }
+                              : null,
                           child: const Text("Go ahead"),
                         ),
                       ),
@@ -183,7 +187,10 @@ class _HomePageState extends State<HomePage> {
                             width: 5,
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              locationService.shoWSnackBarMessage(
+                                  'Coming soon!!', context);
+                            },
                             style: ButtonStyle(
                                 foregroundColor:
                                     MaterialStateProperty.all(textColour)),
@@ -199,42 +206,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-//Fetches all countries from 'https://freetestapi.com/api/v1/countries'
+//Calls the location service to fetch all countries
   Future<void> fetchCountries() async {
     if (allCountries.isEmpty) {
-      final response = await http.get(Uri.parse(urlString));
-      final List<dynamic> countryJson = json.decode(response.body);
-// If the server returns a 200 OK response, parse the JSON
-      if (response.statusCode == 200) {
-        String? previousLetter;
-        setState(() {
-          for (var country in countryJson) {
-            String countryName = country['name'];
-            String firstLetter = countryName[0].toUpperCase();
-            if (firstLetter != previousLetter) {
-              allCountries[countryName] = [country['flag'], firstLetter];
-              previousLetter = firstLetter;
-            } else {
-              allCountries[countryName] = [country['flag'], ""];
-            }
-          }
-
-          _loading = false;
-        });
-      }
-      //Throw an exception if another staus code is returned
-      else {
-        setState(() {
-          _loading = false;
-        });
-        throw Exception('Failed to load list');
-      }
+      locationService.fetchCountries(allCountries, context);
+      setState(() {
+        isLoading = false;
+      });
     }
-  }
-
-  setCountry() {
-    // if (mounted) {
-    //   setState(() {});
-    // }
   }
 }

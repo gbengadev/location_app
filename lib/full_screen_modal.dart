@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:location_app/constants/styles.dart';
 import 'package:logger/logger.dart';
-
 import 'homepage.dart';
 
 class CountrySearchModal extends StatefulWidget {
   final Map<String, List<String>> allCountries;
   final ScrollController scrollController;
-  final Function? onCountrySelected;
-  const CountrySearchModal(
-      {super.key,
-      required this.allCountries,
-      required this.scrollController,
-      this.onCountrySelected});
+
+  const CountrySearchModal({
+    super.key,
+    required this.allCountries,
+    required this.scrollController,
+  });
 
   @override
   State<CountrySearchModal> createState() => _CountrySearchModalState();
@@ -22,6 +21,7 @@ class _CountrySearchModalState extends State<CountrySearchModal> {
   final TextEditingController searchController = TextEditingController();
   var logger = Logger();
   Map<String, List<String>> countries = {};
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +35,7 @@ class _CountrySearchModalState extends State<CountrySearchModal> {
     super.dispose();
   }
 
+//Listens for keyboard input from the user and filter search based on input.
   void queryListner() {
     searchCountry(searchController.text);
   }
@@ -46,7 +47,6 @@ class _CountrySearchModalState extends State<CountrySearchModal> {
         countries = widget.allCountries;
       });
     } else {
-      logger.d(countries);
       setState(() {
         countries = {
           for (var key in widget.allCountries.keys.where(
@@ -107,7 +107,6 @@ class _CountrySearchModalState extends State<CountrySearchModal> {
                                     showCountry: true,
                                     country: {country: countries[country]![0]},
                                   )));
-                      widget.onCountrySelected;
                     },
                     child: SizedBox(
                       height: 40,
@@ -131,30 +130,6 @@ class _CountrySearchModalState extends State<CountrySearchModal> {
                       ]),
                     ),
                   );
-                  // return ListTile(
-                  //     leading: Image.network(
-                  //       countries[country]![0],
-                  //       height: 20,
-                  //       width: 20,
-                  //     ),
-                  //     title: Text(
-                  //       country,
-                  //       style: const TextStyle(
-                  //           color: textColour, fontWeight: bold),
-                  //     ),
-                  //     trailing: Text(countries[country]![1]),
-                  //     onTap: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => HomePage(
-                  //                     showCountry: true,
-                  //                     country: {
-                  //                       country: countries[country]![0]
-                  //                     },
-                  //                   )));
-                  //       widget.onCountrySelected;
-                  //     });
                 }),
           ),
         ],

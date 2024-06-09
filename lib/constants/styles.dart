@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 const textColour = Colors.black45;
 const bold = FontWeight.w500;
 var searchBarTheme = SearchBarThemeData(
-  elevation: MaterialStateProperty.all(3),
+  elevation: MaterialStateProperty.all(1),
   shape: MaterialStateProperty.all(RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(6.0),
   )),
