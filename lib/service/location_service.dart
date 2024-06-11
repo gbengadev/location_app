@@ -1,16 +1,8 @@
-// import 'dart:convert';
-
-// import '../constants/constants.dart';
-// import 'package:http/http.dart' as http;
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:logger/web.dart';
 import '../constants/constants.dart';
-import '../exceptions.dart';
-
-var logger = Logger();
+import '../exceptions/exceptions.dart';
 
 class LocationService {
 //Fetches all countries from 'https://freetestapi.com/api/v1/countries'
@@ -54,7 +46,7 @@ class LocationService {
       message = 'Unable to fetch countries.Please check your network';
       shoWSnackBarMessage(message, context);
     } else if (e is StatusCodeException) {
-      message = ('Unable to fetch countries at the moment.');
+      message = 'Unable to fetch countries at the moment.';
       shoWSnackBarMessage(message, context);
     }
   }
